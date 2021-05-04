@@ -11,9 +11,6 @@ export class AppModel {
 		private generator: PositiveIntegerGenerator,
 		private output: string = AppModel.SELECT_MODE_MESSAGE,
 		private completed: boolean = false,
-		private answer: number = 0,
-		private singPlayerMode: boolean = false,
-		private tries: number = 0,
 		// private processor: Processor
 	) {
 		this.processor  = this.processModeSelection()
@@ -29,31 +26,23 @@ export class AppModel {
 
 	processInput(input: string): void {
 		this.processor = this.processor(input);
-		// if (this.singPlayerMode) {
-		// 	this.processSinglePlayerGame(input);
-		// } else {
-			// 	this.processModeSelection(input);
-			// }
-		}
-		
-		// private processSinglePlayerGame(input: string) {
-	private getSinglePlayerGameProcessor(tries: number): Processor {
+	}
+	private getSinglePlayerGameProcessor(answer: number, tries: number): Processor {
 		return input => {
 			const guess = parseInt(input);
 			// this.tries += 1;
-			if (guess < this.answer) {
+			if (guess < answer) {
 				this.output = 'Your guess is too low' + NEW_LINE + 'Enter your guess: ';
-				return this.getSinglePlayerGameProcessor(tries + 1);
+				return this.getSinglePlayerGameProcessor(answer, tries + 1);
 			}
-			else if (guess > this.answer) {
+			else if (guess > answer) {
 				this.output = 'Your guess is too high' + NEW_LINE + 'Enter your guess: ';
-				return this.getSinglePlayerGameProcessor(tries + 1);
+				return this.getSinglePlayerGameProcessor(answer, tries + 1);
 			}
 			else {
 				this.output = 'Correct' + (tries) + (tries === 1 ? ' guess' : ' guesses') + NEW_LINE
 				+ '1: Single player game' + NEW_LINE + '2: Multiplayer game' + NEW_LINE + '3: Exit' + NEW_LINE + 'Enter selection: ';
-				this.tries = 0;
-				this.singPlayerMode = false;
+				tries = 0;
 				return this.processModeSelection()
 			}
 		}
@@ -63,9 +52,8 @@ export class AppModel {
 		return (input: string) => {
 			if (input === '1') {
 				this.output = 'Single player game' + NEW_LINE + 'I am thinking of a number between 1 and 100' + NEW_LINE + 'Enter your guess: ';
-				this.singPlayerMode = true;
-				this.answer = this.generator.generateLessThanOrEqualToHundred();
-				return this.getSinglePlayerGameProcessor(1);
+				const answer = this.generator.generateLessThanOrEqualToHundred();
+				return this.getSinglePlayerGameProcessor(answer, 1);
 			}
 			else {
 				this.completed = true;
