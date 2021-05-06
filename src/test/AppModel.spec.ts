@@ -295,14 +295,38 @@ describe('AppModel', () => {
 		}
 		sut.flushOutput();
 		sut.processInput('50');
-
+		
 		const actual = sut.flushOutput();
-		console.log(actual)
-
+		
 		expect(actual).toContain(winner + ' wins' + NEW_LINE);
-		
-		
 	})
+	
+	it('sut prints select mode message if multiplayer game is finished', () => {
+		const sut = new AppModel(new PositiveIntegerGeneratorStub([50]));
+		sut.processInput('2');
+		sut.processInput('foo,bar,baz');
+		sut.flushOutput();
+		sut.processInput('50');
+		
+		const actual = sut.flushOutput();
+		
+		expect(actual.endsWith('1: Single player game' + NEW_LINE + '2: Multiplayer game' + NEW_LINE + '3: Exit' + NEW_LINE + 'Enter selection: ')).toBeTruthy();
+	})
+	
+	it('sut returns to mode selection if multiplayer game is finished', () => {
+		const sut = new AppModel(new PositiveIntegerGeneratorStub([50]));
+		sut.processInput('2');
+		sut.processInput('foo,bar,baz');
+		sut.processInput('20');
+		sut.processInput('50');
+		sut.processInput('3');
+
+		const actual = sut.isCompleted();
+		expect(actual).toBeTruthy();
+
+	})
+
+
 	
 	
 	

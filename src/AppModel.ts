@@ -83,12 +83,16 @@ export class AppModel {
 			const guess = parseInt(input);
 			if (guess < answer) {
 				this.output = player + "'s guess is too low" + NEW_LINE;
+				return this.getMultiPlayerGameProcessor(players, tries + 1, answer)
 			} else if (guess > answer) {
 				this.output = player + "'s guess is too high" + NEW_LINE;
+				return this.getMultiPlayerGameProcessor(players, tries + 1, answer)
 			} else {
 				this.output = 'correct! ' + player +' wins' + NEW_LINE;
+				this.output += AppModel.SELECT_MODE_MESSAGE;
+				// this.completed = true;
+				return this.processModeSelection();
 			}
-			return this.getMultiPlayerGameProcessor(players, tries + 1, answer)
 		}
 	}
 }
