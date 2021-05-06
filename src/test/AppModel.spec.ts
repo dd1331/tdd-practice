@@ -36,7 +36,6 @@ describe('AppModel', () => {
 		sut.processInput('1');
 		
 		const actual: string = sut.flushOutput();
-		// 'Single player game' + NEW_LINE + 'I am thinking of a number between 1 and 100' + NEW_LINE + 'Enter your guess: '
 		expect(actual).toEqual('Single player game' + NEW_LINE + 'I am thinking of a number between 1 and 100' + NEW_LINE + 'Enter your guess: ')
 	})
 	
@@ -164,7 +163,7 @@ describe('AppModel', () => {
 		
 		const actual = sut.flushOutput();
 		
-		expect(actual).toContain('I am thinking of a number between 1 and 100');
+		expect(actual.startsWith('I am thinking of a number between 1 and 100' + NEW_LINE)).toBeTruthy();
 		
 	})
 	

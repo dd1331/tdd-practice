@@ -33,13 +33,16 @@ export class AppModel {
 	private processModeSelection(): Processor {
 		return (input: string) => {
 			if (input === '1') {
-				this.output = 'Single player game' + NEW_LINE + 'I am thinking of a number between 1 and 100' + NEW_LINE + 'Enter your guess: ';
+				this.println('Single player game')
+				this.println('I am thinking of a number between 1 and 100')
+				this.print('Enter your guess: ')
 				const answer = this.generator.generateLessThanOrEqualToHundred();
 				return this.getSinglePlayerGameProcessor(answer, 1);
 			} else if ( input === '2') {
-				this.output = 'Multiplayer game' + NEW_LINE + 'Enter player names with commas:';
+				this.println('Multiplayer game');
+				this.print('Enter player names with commas:');
 				const answer = this.generator.generateLessThanOrEqualToHundred();
-				return this.startMultiPlayerGameProcessor(answer);
+				return this.startMultiPlayerGame(answer);
 			}
 			else {
 				this.completed = true;
@@ -48,49 +51,61 @@ export class AppModel {
 		}
 	}
 
+	private println(message: string) {
+		this.output += message + NEW_LINE;
+	}
+
+	private print(message: string) {
+		this.output += message;
+	}
+
 	private getSinglePlayerGameProcessor(answer: number, tries: number): Processor {
 		return input => {
 			const guess = parseInt(input);
 			// this.tries += 1;
 			if (guess < answer) {
-				this.output = 'Your guess is too low' + NEW_LINE + 'Enter your guess: ';
+				this.println('Your guess is too low');
+				this.print('Enter your guess: ');
 				return this.getSinglePlayerGameProcessor(answer, tries + 1);
 			}
 			else if (guess > answer) {
-				this.output = 'Your guess is too high' + NEW_LINE + 'Enter your guess: ';
+				this.println('Your guess is too high');
+				this.print('Enter your guess: ');
 				return this.getSinglePlayerGameProcessor(answer, tries + 1);
 			}
 			else {
-				this.output = 'Correct' + (tries) + (tries === 1 ? ' guess' : ' guesses') + NEW_LINE
-				+ '1: Single player game' + NEW_LINE + '2: Multiplayer game' + NEW_LINE + '3: Exit' + NEW_LINE + 'Enter selection: ';
+				this.println('Correct' + (tries) + (tries === 1 ? ' guess' : ' guesses'));
+				this.println('1: Single player game');
+				this.println('2: Multiplayer game')
+				this.println('3: Exit');
+				this.print('Enter selection: ');
 				tries = 0;
 				return this.processModeSelection()
 			}
 		}
 	}
 	
-	private startMultiPlayerGameProcessor(answer: number): Processor {
+	private startMultiPlayerGame(answer: number): Processor {
 		return input => {
 			const players = input.split(',')
-			this.output = 'I am thinking of a number between 1 and 100' 
+			this.println('I am thinking of a number between 1 and 100'); 
 			return this.getMultiPlayerGameProcessor(players, 1, answer);
 		}
 	}
 	private getMultiPlayerGameProcessor(players: string[], tries: number, answer: number): Processor {
 		const player = players[(tries - 1) % players.length];
-		this.output += ' Enter ' + player + "'s guess: "
+		this.print(' Enter ' + player + "'s guess: ");
 		return input => {
 			const guess = parseInt(input);
 			if (guess < answer) {
-				this.output = player + "'s guess is too low" + NEW_LINE;
+				this.println(player + "'s guess is too low");
 				return this.getMultiPlayerGameProcessor(players, tries + 1, answer)
 			} else if (guess > answer) {
-				this.output = player + "'s guess is too high" + NEW_LINE;
+				this.println(player + "'s guess is too high");
 				return this.getMultiPlayerGameProcessor(players, tries + 1, answer)
 			} else {
-				this.output = 'correct! ' + player +' wins' + NEW_LINE;
-				this.output += AppModel.SELECT_MODE_MESSAGE;
-				// this.completed = true;
+				this.println('correct! ' + player +' wins');
+				this.print(AppModel.SELECT_MODE_MESSAGE);
 				return this.processModeSelection();
 			}
 		}

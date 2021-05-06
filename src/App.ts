@@ -1,17 +1,21 @@
 import { ReadLine, createInterface } from "readline";
+import { AppModel } from "./AppModel";
+import { RandomGenerator } from "./RandomGenerator";
 {	
-	const readline: ReadLine = createInterface({
-			input: process.stdin,
-			output: process.stdout,
-			// terminal: false
-		})
-	let input: string[] = [];
-	readline.on('line', line => {
-		console.log('line',line)
-		input.push(line);
+	const readlineOg: ReadLine = createInterface({
+		input: process.stdin,
+		output: process.stdout,
 	})
-	readline.on('close', () => {
-		console.log('input',input);
-		process.exit();
-	})
+	const modelOg: AppModel = new AppModel(new RandomGenerator());
+	const recursiveReadline = (model: AppModel, readline: ReadLine) => {
+		readline.question(model.flushOutput(), answer => {
+			model.processInput(answer);
+			if (model.isCompleted() === true) {
+				readlineOg.close();
+			} else {
+				recursiveReadline(model, readline)
+			}
+		});
+	}
+	recursiveReadline(modelOg, readlineOg);
 }
