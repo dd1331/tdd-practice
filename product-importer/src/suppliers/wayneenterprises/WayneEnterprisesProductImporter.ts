@@ -1,12 +1,16 @@
 import { WayneEnterprisesProductSource } from "./WayneEnterprisesProductSource";
 import { IProductImporter } from "../../IProductImporter";
-import { WayneEnterprisesProduct } from "./WayneEnterPrisesProduct";
 import { Product } from "../../Product";
+import { WayneEnterprisesProductTranslator } from "./WayneEnterprisesProductTranslator";
 
 
 export class WayneEnterprisesProductImporter implements IProductImporter {
 	constructor(private dataSource: WayneEnterprisesProductSource) {}
-	fetchProducts(): Product[] | Iterable<WayneEnterprisesProduct> {
-		return this.dataSource.fetchProducts();
+	fetchProducts(): Product[] {
+		const translator = new WayneEnterprisesProductTranslator();
+		const result: Product[] = this.dataSource.fetchProducts().map(product => {
+			return translator.translate(product);
+		})
+		return result;
 	}
 }

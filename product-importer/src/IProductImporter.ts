@@ -3,5 +3,5 @@ import { Product } from "./Product";
 
 export interface IProductImporter {
 	//temp
-	fetchProducts(): Product[] | Iterable<WayneEnterprisesProduct>;
+	fetchProducts(): Product[];
 }
