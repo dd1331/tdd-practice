@@ -2,6 +2,5 @@ import { WayneEnterprisesProduct } from "./suppliers/wayneenterprises/WayneEnter
 import { Product } from "./Product";
 
 export interface IProductImporter {
-	//temp
 	fetchProducts(): Product[];
 }

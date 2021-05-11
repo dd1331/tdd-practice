@@ -9,6 +9,8 @@ import { Product } from '../Product';
 import { ProductInventorySpy } from './ProductInventorySpy';
 import { IProductValidator } from '../IProductValidator';
 import { ListPriceFilter } from '../ListPriceFilter';
+import { Pricing } from '../Pricing';
+import { IProductInventory } from '../IProductInventory';
 
 describe('product synchronize', () => {
 	const params = [[
@@ -41,5 +43,27 @@ describe('product synchronize', () => {
 		sut.run();
 
 		expect(spy.log).toHaveLength(0);
+	})
+
+	it('MOCK sut does not save invalid product', () => {
+		const pricing = new Pricing(10, 1);
+		const product = new Product('mockSupplierNmae', 'mockProductCode', 'mockProductName', pricing);
+		jest.mock("../suppliers/wayneenterprises/WayneEnterprisesProductImporter");
+		const importer: IProductImporter = WayneEnterprisesProductImporter.prototype;
+		jest.spyOn(WayneEnterprisesProductImporter.prototype, 'fetchProducts').mockImplementation(() => [product]);
+		jest.spyOn(ListPriceFilter.prototype, 'isValid').mockImplementation(() => false);
+		jest.spyOn(ProductInventorySpy.prototype, 'upsertProduct');
+
+		const validator: IProductValidator = ListPriceFilter.prototype;
+
+		// NOTE using class of interface in java is possible???
+		// spy class is used here for now
+		const inventory: IProductInventory = ProductInventorySpy.prototype;
+		const sut = new ProductSynchronizer(importer, validator, inventory);
+
+		sut.run();
+
+		expect(inventory.upsertProduct).not.toHaveBeenCalled();
+
 	})
 })
